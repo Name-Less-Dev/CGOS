@@ -1,39 +1,56 @@
 import { useState } from "react";
 import { auth } from "../firebase";
-import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from "firebase/auth";
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signOut,
+} from "firebase/auth";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
 
-  const login = async () => {
-    try {
-      await signInWithEmailAndPassword(auth, email, senha);
-      alert("Logado com sucesso");
-    } catch (err) {
-      console.error(err);
-      alert("Erro no login");
-    }
-  };
-
   const registrar = async () => {
     try {
       await createUserWithEmailAndPassword(auth, email, senha);
-      alert("Usuário criado");
+      alert("Usuário registrado");
     } catch (err) {
-      console.error(err);
-      alert("Erro ao criar usuário");
+      alert(err.message);
     }
   };
 
+  const login = async () => {
+    try {
+      await signInWithEmailAndPassword(auth, email, senha);
+      alert("Login realizado");
+    } catch (err) {
+      alert(err.message);
+    }
+  };
+
+  const sair = async () => {
+    await signOut(auth);
+    alert("Deslogado");
+  };
+
   return (
-    <div>
-      <h1>Login / Registro</h1>
-      <input value={email} onChange={e => setEmail(e.target.value)} placeholder="Email" />
-      <input type="password" value={senha} onChange={e => setSenha(e.target.value)} placeholder="Senha" />
-      <br />
-      <button onClick={login}>Entrar</button>
-      <button onClick={registrar}>Registrar</button>
+    <div style={{ textAlign: "center" }}>
+      <h2>Login / Registro</h2>
+      <input
+        type="email"
+        placeholder="Email"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+      /><br />
+      <input
+        type="password"
+        placeholder="Senha"
+        value={senha}
+        onChange={(e) => setSenha(e.target.value)}
+      /><br />
+      <button onClick={login}>Login</button>
+      <button onClick={registrar} style={{ marginLeft: 10 }}>Registrar</button><br />
+      <button onClick={sair} style={{ marginTop: 10 }}>Sair</button>
     </div>
   );
 }

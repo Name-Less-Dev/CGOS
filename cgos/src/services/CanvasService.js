@@ -4,23 +4,32 @@ import {
   doc,
   setDoc,
   getDocs,
-  deleteDoc
+  deleteDoc,
 } from "firebase/firestore";
 
+function getUserId() {
+  const user = auth.currentUser;
+  if (!user) throw new Error("Usuário não autenticado");
+  return user.uid;
+}
+
 export async function salvarComponenteNoCanvas(comp) {
-  const ref = doc(db, "canvas", auth.currentUser.uid, "components", comp.id);
+  const userId = getUserId();
+  const ref = doc(db, "canvas", userId, "components", comp.id);
   await setDoc(ref, comp);
 }
 
 export async function carregarComponentesDoCanvas() {
-  const ref = collection(db, "canvas", auth.currentUser.uid, "components");
+  const userId = getUserId();
+  const ref = collection(db, "canvas", userId, "components");
   const snapshot = await getDocs(ref);
   return snapshot.docs.map((doc) => doc.data());
 }
 
 export async function limparCanvas() {
-  const ref = collection(db, "canvas", auth.currentUser.uid, "components");
+  const userId = getUserId();
+  const ref = collection(db, "canvas", userId, "components");
   const snapshot = await getDocs(ref);
-  const deletes = snapshot.docs.map((doc) => deleteDoc(doc.ref));
-  await Promise.all(deletes);
+  const deletions = snapshot.docs.map((doc) => deleteDoc(doc.ref));
+  await Promise.all(deletions);
 }

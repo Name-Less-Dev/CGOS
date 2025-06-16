@@ -1,14 +1,20 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   DndContext,
   useDraggable,
   useDroppable,
 } from "@dnd-kit/core";
 
-function DraggableComponent({ id, x, y, type, onDragEnd }) {
-  const { attributes, listeners, setNodeRef, transform } = useDraggable({
-    id,
-  });
+import {
+  salvarComponenteNoCanvas,
+  carregarComponentesDoCanvas,
+  limparCanvas,
+} from "../services/CanvasService";
+
+import { auth } from "../firebase";
+
+function DraggableComponent({ id, x, y, type }) {
+  const { attributes, listeners, setNodeRef } = useDraggable({ id });
 
   const style = {
     transform: `translate(${x}px, ${y}px)`,
@@ -20,12 +26,7 @@ function DraggableComponent({ id, x, y, type, onDragEnd }) {
   };
 
   return (
-    <div
-      ref={setNodeRef}
-      style={style}
-      {...listeners}
-      {...attributes}
-    >
+    <div ref={setNodeRef} style={style} {...listeners} {...attributes}>
       {type}
     </div>
   );
@@ -43,17 +44,21 @@ function DroppableCanvas({ children }) {
     background: "#f9f9f9",
   };
 
-  return (
-    <div ref={setNodeRef} style={style}>
-      {children}
-    </div>
-  );
+  return <div ref={setNodeRef} style={style}>{children}</div>;
 }
 
 export default function CanvasPage() {
   const [componentes, setComponentes] = useState([]);
 
-  const adicionarComponente = () => {
+  // Carregar componentes no início
+  useEffect(() => {
+    const user = auth.currentUser;
+    if (user) {
+      carregarComponentesDoCanvas().then(setComponentes);
+    }
+  }, []);
+
+  const adicionarComponente = async () => {
     const novo = {
       id: `comp-${Date.now()}`,
       type: "Button",
@@ -61,28 +66,48 @@ export default function CanvasPage() {
       y: 50,
     };
     setComponentes((prev) => [...prev, novo]);
+    await salvarComponenteNoCanvas(novo);
   };
 
-  const handleDragEnd = (event) => {
+  const handleDragEnd = async (event) => {
     const { active, delta } = event;
 
-    setComponentes((prev) =>
-      prev.map((c) =>
+    setComponentes((prev) => {
+      const atualizados = prev.map((c) =>
         c.id === active.id
-          ? {
-              ...c,
-              x: c.x + delta.x,
-              y: c.y + delta.y,
-            }
+          ? { ...c, x: c.x + delta.x, y: c.y + delta.y }
           : c
-      )
-    );
+      );
+
+      const atualizado = atualizados.find((c) => c.id === active.id);
+      salvarComponenteNoCanvas(atualizado);
+
+      return atualizados;
+    });
   };
+
+  const limpar = async () => {
+    try {
+      await limparCanvas();
+      setComponentes([]);
+      alert("Canvas limpo com sucesso!");
+    } catch (error) {
+      console.error("Erro ao limpar:", error);
+      alert("Erro ao limpar o canvas");
+    }
+  };
+
+  if (!auth.currentUser) {
+    return <h2 style={{ textAlign: "center" }}>Por favor, faça login para usar o Canvas.</h2>;
+  }
 
   return (
     <div style={{ textAlign: "center" }}>
       <h1>Canvas Visual CGOS</h1>
       <button onClick={adicionarComponente}>Adicionar Componente</button>
+      <button onClick={limpar} style={{ marginLeft: 10 }}>
+        Limpar Canvas
+      </button>
 
       <DndContext onDragEnd={handleDragEnd}>
         <DroppableCanvas>
