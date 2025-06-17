@@ -12,6 +12,8 @@ import {
   limparProjeto,
 } from "../services/CanvasService";
 
+import { gerarHTML, gerarReact } from "../services/ExportService";
+
 import { auth } from "../firebase";
 
 function DraggableComponent({ id, x, y, type }) {
@@ -92,6 +94,18 @@ export default function CanvasPage() {
     setComponentes([]);
   };
 
+  const exportarHTML = () => {
+    const codigo = gerarHTML(componentes);
+    console.log(codigo);
+    alert("Código HTML gerado. Veja no console.");
+  };
+
+  const exportarReact = () => {
+    const codigo = gerarReact(componentes);
+    console.log(codigo);
+    alert("Código React gerado. Veja no console.");
+  };
+
   if (!auth.currentUser) {
     return <h2 style={{ textAlign: "center" }}>Por favor, faça login para usar o Canvas.</h2>;
   }
@@ -102,6 +116,12 @@ export default function CanvasPage() {
       <button onClick={adicionarComponente}>Adicionar Componente</button>
       <button onClick={limpar} style={{ marginLeft: 10 }}>
         Limpar Projeto
+      </button>
+      <button onClick={exportarHTML} style={{ marginLeft: 10 }}>
+        Exportar HTML
+      </button>
+      <button onClick={exportarReact} style={{ marginLeft: 10 }}>
+        Exportar React
       </button>
 
       <DndContext onDragEnd={handleDragEnd}>
