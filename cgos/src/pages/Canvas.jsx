@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 import {
   DndContext,
   useDraggable,
@@ -6,9 +7,9 @@ import {
 } from "@dnd-kit/core";
 
 import {
-  salvarComponenteNoCanvas,
-  carregarComponentesDoCanvas,
-  limparCanvas,
+  salvarComponenteNoProjeto,
+  carregarComponentesDoProjeto,
+  limparProjeto,
 } from "../services/CanvasService";
 
 import { auth } from "../firebase";
@@ -48,15 +49,15 @@ function DroppableCanvas({ children }) {
 }
 
 export default function CanvasPage() {
+  const { id: projectId } = useParams();
   const [componentes, setComponentes] = useState([]);
 
-  // Carregar componentes no início
   useEffect(() => {
     const user = auth.currentUser;
     if (user) {
-      carregarComponentesDoCanvas().then(setComponentes);
+      carregarComponentesDoProjeto(projectId).then(setComponentes);
     }
-  }, []);
+  }, [projectId]);
 
   const adicionarComponente = async () => {
     const novo = {
@@ -66,7 +67,7 @@ export default function CanvasPage() {
       y: 50,
     };
     setComponentes((prev) => [...prev, novo]);
-    await salvarComponenteNoCanvas(novo);
+    await salvarComponenteNoProjeto(projectId, novo);
   };
 
   const handleDragEnd = async (event) => {
@@ -80,21 +81,15 @@ export default function CanvasPage() {
       );
 
       const atualizado = atualizados.find((c) => c.id === active.id);
-      salvarComponenteNoCanvas(atualizado);
+      salvarComponenteNoProjeto(projectId, atualizado);
 
       return atualizados;
     });
   };
 
   const limpar = async () => {
-    try {
-      await limparCanvas();
-      setComponentes([]);
-      alert("Canvas limpo com sucesso!");
-    } catch (error) {
-      console.error("Erro ao limpar:", error);
-      alert("Erro ao limpar o canvas");
-    }
+    await limparProjeto(projectId);
+    setComponentes([]);
   };
 
   if (!auth.currentUser) {
@@ -103,10 +98,10 @@ export default function CanvasPage() {
 
   return (
     <div style={{ textAlign: "center" }}>
-      <h1>Canvas Visual CGOS</h1>
+      <h1>Canvas Projeto: {projectId}</h1>
       <button onClick={adicionarComponente}>Adicionar Componente</button>
       <button onClick={limpar} style={{ marginLeft: 10 }}>
-        Limpar Canvas
+        Limpar Projeto
       </button>
 
       <DndContext onDragEnd={handleDragEnd}>

@@ -13,22 +13,19 @@ function getUserId() {
   return user.uid;
 }
 
-export async function salvarComponenteNoCanvas(comp) {
-  const userId = getUserId();
-  const ref = doc(db, "canvas", userId, "components", comp.id);
+export async function salvarComponenteNoProjeto(projectId, comp) {
+  const ref = doc(db, "projects", projectId, "components", comp.id);
   await setDoc(ref, comp);
 }
 
-export async function carregarComponentesDoCanvas() {
-  const userId = getUserId();
-  const ref = collection(db, "canvas", userId, "components");
+export async function carregarComponentesDoProjeto(projectId) {
+  const ref = collection(db, "projects", projectId, "components");
   const snapshot = await getDocs(ref);
   return snapshot.docs.map((doc) => doc.data());
 }
 
-export async function limparCanvas() {
-  const userId = getUserId();
-  const ref = collection(db, "canvas", userId, "components");
+export async function limparProjeto(projectId) {
+  const ref = collection(db, "projects", projectId, "components");
   const snapshot = await getDocs(ref);
   const deletions = snapshot.docs.map((doc) => deleteDoc(doc.ref));
   await Promise.all(deletions);
