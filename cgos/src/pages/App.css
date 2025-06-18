@@ -1,0 +1,121 @@
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f5f7fa;
+  margin: 0;
+  padding: 0;
+}
+
+.container {
+  max-width: 1000px;
+  margin: auto;
+  text-align: center;
+  padding: 30px;
+}
+
+h1 {
+  color: #222;
+  margin-bottom: 20px;
+}
+
+h2 {
+  color: #333;
+  margin-bottom: 10px;
+}
+
+input {
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  margin: 5px;
+  outline: none;
+}
+
+input:focus {
+  border-color: #007bff;
+}
+
+.button {
+  background-color: #007bff;
+  border: none;
+  color: white;
+  padding: 8px 16px;
+  margin: 5px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.button:hover {
+  background-color: #0056b3;
+}
+
+.button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+.list {
+  list-style: none;
+  padding: 0;
+}
+
+.list li {
+  background: white;
+  margin: 8px auto;
+  padding: 10px 15px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  box-shadow: 0px 1px 5px rgba(0,0,0,0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.list li b {
+  color: #222;
+}
+
+.canvas-box {
+  width: 900px;
+  height: 600px;
+  border: 2px dashed #999;
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0px 2px 10px rgba(0,0,0,0.1);
+  position: relative;
+  margin: 20px auto;
+}
+
+.component-box {
+  border: 1px solid #333;
+  padding: 8px;
+  background: #fff;
+  position: absolute;
+  cursor: move;
+  border-radius: 6px;
+  box-shadow: 0px 1px 5px rgba(0,0,0,0.15);
+}
+
+.info-text {
+  color: #666;
+  margin-top: 10px;
+}
+
+nav {
+  background-color: white;
+  padding: 10px 20px;
+  box-shadow: 0px 2px 8px rgba(0,0,0,0.05);
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+nav a {
+  text-decoration: none;
+  color: #007bff;
+  font-weight: bold;
+}
+
+nav a:hover {
+  text-decoration: underline;
+}
