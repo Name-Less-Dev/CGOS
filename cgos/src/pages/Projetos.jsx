@@ -1,3 +1,4 @@
+import "./App.css";
 import { useEffect, useState } from "react";
 import { criarProjeto, listarProjetos, apagarProjeto } from "../services/ProjetoService";
 import { useNavigate } from "react-router-dom";
