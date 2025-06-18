@@ -1,4 +1,3 @@
-import "./App.css";
 import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
 import CanvasPage from "./pages/Canvas";
 import Login from "./pages/Login";
